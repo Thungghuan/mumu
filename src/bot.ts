@@ -1,5 +1,8 @@
+import { createApi, Api } from './api'
+import { loadSeting } from './utils'
 import {
   BotCommandName,
+  BotConfig,
   BotEventCache,
   BotEventHandler,
   BotEventKey,
@@ -8,10 +11,29 @@ import {
 } from './types'
 
 export class Bot {
-  private eventCache: BotEventCache = new Map()
+  qq: number
+  masterQQ: number
 
-  constructor() {
+  private eventCache: BotEventCache = new Map()
+  private api: Api
+
+  constructor(config: BotConfig) {
+    console.log('Resolving bot configure file...')
+    const { qq, masterQQ, settingFile } = config
+
+    console.log('Loading bot setting file...')
+    const setting = loadSeting(settingFile)
+
+    const { verifyKey } = setting
+
+    const { host, port } = setting.adapterSettings.http
+    const baseURL = `http://${host}:${port || 80}`
+
     console.log('Creating a new bot...')
+    this.qq = qq
+    this.masterQQ = masterQQ
+
+    this.api = createApi(qq, baseURL, verifyKey)
   }
 
   on(eventType: BotEventName, handler: BotEventHandler) {
@@ -65,5 +87,13 @@ export class Bot {
 
   use() {}
 
-  start() {}
+  async start() {
+    console.log(await this.api.verify())
+    console.log(await this.api.bind())
+
+    process.on('exit', () => {
+      console.log(this.api.release())
+      console.log('exit')
+    })
+  }
 }

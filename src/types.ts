@@ -1,3 +1,19 @@
+export interface BotConfig {
+  qq: number
+  masterQQ: number
+  settingFile: string
+}
+
+export interface BotSetting {
+  verifyKey: string
+  adapterSettings: {
+    http: {
+      host: string
+      port?: number
+    }
+  }
+}
+
 export type BotEventCache = Map<BotEventKey<BotEventType>, BotEventHandler[]>
 
 export type BotEventType = 'message' | 'command'
