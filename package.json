@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsup",
-    "dev": "tsx watch examples/basic.ts",
-    "preview": "node dist/index.mjs"
+    "dev": "tsup --watch --onSuccess \"tsx examples/basic.ts\""
   },
   "keywords": [],
   "author": "",
