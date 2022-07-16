@@ -1,4 +1,5 @@
 import {
+  BotCommandName,
   BotEventCache,
   BotEventHandler,
   BotEventKey,
@@ -23,10 +24,30 @@ export class Bot {
     }
   }
 
-  once() {}
-
   off(eventType: BotEventName) {
     const key: BotEventKey<'message'> = `message:${eventType}`
+
+    if (this.eventCache.has(key)) {
+      this.eventCache.delete(key)
+    }
+  }
+
+  command(commandName: BotCommandName, handler: BotEventHandler) {
+    if (!commandName) return
+
+    const key: BotEventKey<'command'> = `command:${commandName}`
+
+    if (this.eventCache.has(key)) {
+      this.eventCache.get(key).push(handler)
+    } else {
+      this.eventCache.set(key, [handler])
+    }
+  }
+
+  offCommand(commandName: BotCommandName) {
+    if (!commandName) return
+
+    const key: BotEventKey<'command'> = `command:${commandName}`
 
     if (this.eventCache.has(key)) {
       this.eventCache.delete(key)

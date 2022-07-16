@@ -28,7 +28,7 @@ type BotMessageType =
   | 'groupMessage'
   | BotSingleMessageType
 
-type BotCommandName = string
+export type BotCommandName = string
 
 export type BotEventKey<T extends BotEventType> = T extends 'message'
   ? `message:${BotMessageType | '*'}`
