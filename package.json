@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsup",
     "dev": "tsx watch examples/basic.ts",
-    "build": "tsup"
+    "preview": "node dist/index.mjs"
   },
   "keywords": [],
   "author": "",
