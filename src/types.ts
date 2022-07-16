@@ -1,8 +1,7 @@
 export type BotEventCache = Map<BotEventKey<BotEventType>, BotEventHandler[]>
 
-type BotEventType = 'message' | 'command'
+export type BotEventType = 'message' | 'command'
 
-type BotMessageType = 'message' | 'friendMessage' | 'groupMessage'
 type BotSingleMessageType =
   | 'Source'
   | 'Quote'
@@ -23,10 +22,18 @@ type BotSingleMessageType =
   | 'File'
   | 'MiraiCode'
 
+type BotMessageType =
+  | 'message'
+  | 'friendMessage'
+  | 'groupMessage'
+  | BotSingleMessageType
+
 type BotCommandName = string
 
-type BotEventKey<T extends BotEventType> = T extends 'message'
-  ? `message:${BotMessageType | BotSingleMessageType}`
+export type BotEventKey<T extends BotEventType> = T extends 'message'
+  ? `message:${BotMessageType | '*'}`
   : `command:${BotCommandName}`
 
-type BotEventHandler = Function
+export type BotEventName = BotMessageType
+
+export type BotEventHandler = Function
