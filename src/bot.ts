@@ -91,9 +91,26 @@ export class Bot {
     console.log(await this.api.verify())
     console.log(await this.api.bind())
 
+    this.fetch()
+
     process.on('exit', () => {
       console.log(this.api.release())
       console.log('exit')
     })
+  }
+
+  fetch(interval = 500) {
+    const fetchFn = async () => {
+      const messages = await this.api.fetchMessage()
+
+      if (messages.data.length > 0)
+        console.log(messages)
+
+      setTimeout(async () => {
+        await fetchFn()
+      }, interval)
+    }
+
+    fetchFn()
   }
 }

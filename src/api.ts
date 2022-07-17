@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
+import { Message } from './types'
 
 function createApiAdapter(baseURL: string) {
   const adapter = axios.create({ baseURL })
@@ -65,6 +66,15 @@ export class Api {
       sessionKey: this.sessionKey,
       qq: this.qq
     })
+    return data
+  }
+
+  async fetchMessage(count = 10) {
+    const { data } = await this.adapter.get<{
+      code: number
+      msg: string
+      data: Message[]
+    }>(`/fetchMessage?sessionKey=${this.sessionKey}&count=${count}`)
     return data
   }
 }

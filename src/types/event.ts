@@ -1,42 +1,8 @@
-export interface BotConfig {
-  qq: number
-  masterQQ: number
-  settingFile: string
-}
-
-export interface BotSetting {
-  verifyKey: string
-  adapterSettings: {
-    http: {
-      host: string
-      port?: number
-    }
-  }
-}
+import { BotSingleMessageType } from './message'
 
 export type BotEventCache = Map<BotEventKey<BotEventType>, BotEventHandler[]>
 
 export type BotEventType = 'message' | 'command'
-
-type BotSingleMessageType =
-  | 'Source'
-  | 'Quote'
-  | 'At'
-  | 'AtAll'
-  | 'Face'
-  | 'Plain'
-  | 'Image'
-  | 'FlashImage'
-  | 'Voice'
-  | 'Xml'
-  | 'Json'
-  | 'App'
-  | 'Poke'
-  | 'Dice'
-  | 'MusicShare'
-  | 'ForwardMessage'
-  | 'File'
-  | 'MiraiCode'
 
 type BotMessageType =
   | 'message'
