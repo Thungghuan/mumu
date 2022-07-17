@@ -1,4 +1,4 @@
-import config from '../config'
+import config from './config'
 import { Bot } from '../dist'
 
 console.log('Hello World')
