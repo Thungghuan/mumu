@@ -1,5 +1,23 @@
 import axios, { AxiosInstance } from 'axios'
 
+function createApiAdapter(baseURL: string) {
+  const adapter = axios.create({ baseURL })
+
+  adapter.interceptors.response.use(
+    (value) => value,
+    (error) => {
+      return Promise.resolve({
+        data: {
+          code: error.response.status,
+          msg: error.message
+        }
+      })
+    }
+  )
+
+  return adapter
+}
+
 export class Api {
   adapter: AxiosInstance
 
@@ -10,7 +28,7 @@ export class Api {
   constructor(qq: number, baseURL: string, verifyKey: string) {
     this.qq = qq
     this.verifyKey = verifyKey
-    this.adapter = axios.create({ baseURL })
+    this.adapter = createApiAdapter(baseURL)
   }
 
   async verify() {
@@ -20,7 +38,11 @@ export class Api {
     }>('/verify', {
       verifyKey: this.verifyKey
     })
-    this.sessionKey = data.session
+
+    if (data.code === 0) {
+      this.sessionKey = data.session
+    }
+
     return data
   }
 
