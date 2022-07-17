@@ -7,7 +7,8 @@ import {
   BotEventHandler,
   BotEventKey,
   BotEventName,
-  BotEventType
+  BotEventType,
+  Message
 } from './types'
 
 export class Bot {
@@ -99,12 +100,15 @@ export class Bot {
     })
   }
 
-  fetch(interval = 500) {
+  private fetch(interval = 1000) {
     const fetchFn = async () => {
-      const messages = await this.api.fetchMessage()
+      const { data: messages } = await this.api.fetchMessage()
 
-      if (messages.data.length > 0)
-        console.log(messages)
+      if (messages.length > 0) {
+        for await (const message of messages) {
+          this.resolve(message)
+        }
+      }
 
       setTimeout(async () => {
         await fetchFn()
@@ -112,5 +116,9 @@ export class Bot {
     }
 
     fetchFn()
+  }
+
+  private resolve(message: Message) {
+    console.log(message)
   }
 }
