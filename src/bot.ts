@@ -122,6 +122,6 @@ export class Bot {
   }
 
   private resolve(message: Message) {
-    const ctx = createContext(this.api, message)
+    const ctx = createContext(this.api, this.qq, message)
   }
 }

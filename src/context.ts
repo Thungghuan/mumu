@@ -1,8 +1,15 @@
 import { Api } from './api'
-import { Message, MessageChain, MessageType, SourceMessage } from './types'
+import {
+  Message,
+  MessageChain,
+  MessageType,
+  QuoteMessage,
+  SourceMessage
+} from './types'
 
 export class Context {
   api: Api
+  qq: number
 
   messageId: number
   messageType: MessageType
@@ -15,8 +22,16 @@ export class Context {
   chatroom: number = 0
   chatroomName: string
 
-  constructor(api: Api, message: Message) {
+  quoteMessageChain: MessageChain = []
+
+  constructor(
+    api: Api,
+    qq: number,
+    message: Message,
+    withSource: boolean = true
+  ) {
     this.api = api
+    this.qq = qq
 
     console.log(message)
 
@@ -34,14 +49,37 @@ export class Context {
         this.chatroomName = message.sender.group.name
       }
 
-      const [sourceMessage, ...contentMessageChain] = message.messageChain
-      this.sourceMessage = sourceMessage
-      this.contentMessageChain = contentMessageChain
+      if (withSource) {
+        const [sourceMessage, ...contentMessageChain] = message.messageChain
+        this.sourceMessage = sourceMessage
+        this.contentMessageChain = contentMessageChain
+      } else {
+        this.contentMessageChain = message.messageChain
+      }
 
       if (this.isCommand) {
-        this.commandResolver(contentMessageChain)
+        this.commandResolver(this.contentMessageChain)
+      }
+
+      if (this.isQuote) {
+        this.quoteMessageChain = (
+          this.contentMessageChain[0] as QuoteMessage
+        ).origin
+        console.log(this.isQuotedMe)
+        console.log(this.quoteMessageChain)
       }
     }
+  }
+
+  get isQuote() {
+    return this.contentMessageChain[0].type === 'Quote'
+  }
+
+  get isQuotedMe() {
+    return (
+      this.isQuote &&
+      (this.contentMessageChain[0] as QuoteMessage).senderId === this.qq
+    )
   }
 
   get isCommand() {
@@ -66,6 +104,6 @@ export class Context {
   private commandResolver(contentMessageChain: MessageChain) {}
 }
 
-export function createContext(api: Api, message: Message) {
-  return new Context(api, message)
+export function createContext(api: Api, qq: number, message: Message) {
+  return new Context(api, qq, message)
 }
