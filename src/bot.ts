@@ -1,4 +1,5 @@
 import { createApi, Api } from './api'
+import { Context, createContext } from './context'
 import { loadSeting } from './utils'
 import {
   BotCommandName,
@@ -77,12 +78,12 @@ export class Bot {
     }
   }
 
-  private emit<K extends BotEventType>(key: BotEventKey<K>) {
+  private emit<K extends BotEventType>(key: BotEventKey<K>, ctx: Context) {
     if (this.eventCache.has(key)) {
       this.eventCache
         .get(key)
         .slice()
-        .map((fn) => fn())
+        .map((fn) => fn(ctx))
     }
   }
 
@@ -120,5 +121,6 @@ export class Bot {
 
   private resolve(message: Message) {
     console.log(message)
+    const ctx = createContext(this.api, message)
   }
 }

@@ -1,3 +1,4 @@
+import { Context } from '../context'
 import { BotSingleMessageType } from './message'
 
 export type BotEventCache = Map<BotEventKey<BotEventType>, BotEventHandler[]>
@@ -18,4 +19,6 @@ export type BotEventKey<T extends BotEventType> = T extends 'message'
 
 export type BotEventName = BotMessageType
 
-export type BotEventHandler = Function
+export interface BotEventHandler {
+  (ctx: Context): any
+}
