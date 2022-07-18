@@ -120,7 +120,7 @@ export class Bot {
   }
 
   private resolve(message: Message) {
-    console.log(message)
     const ctx = createContext(this.api, message)
+    console.log(ctx.isCommand)
   }
 }
