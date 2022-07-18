@@ -60,36 +60,33 @@ export interface PlainMessage extends BasicSingleMessage {
   text: string
 }
 
-interface SingleMessageMap {
-  Source: SourceMessage
-  Quote: QuoteMessage
-  At: AtMessage
-  AtAll: AtAllMessage
-  Face: FaceMessage
-  Plain: PlainMessage
-}
-
-export type SingleMessage = SingleMessageMap[keyof SingleMessageMap]
+export type SingleMessage =
+  | SourceMessage
+  | QuoteMessage
+  | AtAllMessage
+  | AtAllMessage
+  | FaceMessage
+  | PlainMessage
 
 export type MessageChain = SingleMessage[]
-export type ReceiveMessageChain = [SourceMessage, ...SingleMessage[]]
+export type ReceivedMessageChain = [SourceMessage, ...SingleMessage[]]
 
 export type MessageType = 'FriendMessage' | 'GroupMessage'
 
-export interface BasicMessage {
+export interface BasicReceivedMessage {
   type: MessageType
-  messageChain: ReceiveMessageChain
+  messageChain: ReceivedMessageChain
   sender: Friend | GroupMember
 }
 
-export interface FriendMessage extends BasicMessage {
+export interface ReceivedFriendMessage extends BasicReceivedMessage {
   type: 'FriendMessage'
   sender: Friend
 }
 
-export interface GroupMessage extends BasicMessage {
+export interface ReceivedGroupMessage extends BasicReceivedMessage {
   type: 'GroupMessage'
   sender: GroupMember
 }
 
-export type Message = FriendMessage | GroupMessage
+export type Message = ReceivedFriendMessage | ReceivedGroupMessage
