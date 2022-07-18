@@ -35,8 +35,6 @@ export class Context {
     this.api = api
     this.qq = qq
 
-    console.log(message)
-
     if (message.type === 'FriendMessage' || message.type === 'GroupMessage') {
       this.messageType = message.type
       this.sender = message.sender.id
@@ -69,8 +67,6 @@ export class Context {
         this.quoteMessageChain = (
           this.contentMessageChain[0] as QuoteMessage
         ).origin
-        console.log(this.isQuotedMe)
-        console.log(this.quoteMessageChain)
       }
     }
   }
@@ -95,7 +91,7 @@ export class Context {
     ) {
       return true
     } else if (
-      this.contentMessageChain[0].type === 'Quote' &&
+      this.isQuotedMe &&
       this.contentMessageChain[1].type === 'Plain' &&
       testCommandText(this.contentMessageChain[1].text)
     ) {
