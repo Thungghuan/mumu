@@ -71,6 +71,8 @@ export type SingleMessage =
 export type MessageChain = SingleMessage[]
 export type ReceivedMessageChain = [SourceMessage, ...SingleMessage[]]
 
+export type ChatroomType = 'Friend' | 'Group'
+
 export type MessageType = 'FriendMessage' | 'GroupMessage'
 
 export interface BasicReceivedMessage {

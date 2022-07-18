@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { Message } from './types'
+import { ChatroomType, Message, MessageChain } from './types'
 
 function createApiAdapter(baseURL: string) {
   const adapter = axios.create({ baseURL })
@@ -75,6 +75,25 @@ export class Api {
       msg: string
       data: Message[]
     }>(`/fetchMessage?sessionKey=${this.sessionKey}&count=${count}`)
+    return data
+  }
+
+  async sendMessage(
+    target: number,
+    chatroomType: ChatroomType,
+    messageChain: MessageChain
+  ) {
+    const requestUrl = `/send${chatroomType}Message`
+
+    const { data } = await this.adapter.post<{
+      code: number
+      msg: string
+      messageId: number
+    }>(requestUrl, {
+      sessionKey: this.sessionKey,
+      target,
+      messageChain
+    })
     return data
   }
 }

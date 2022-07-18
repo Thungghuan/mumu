@@ -1,5 +1,6 @@
 import { Api } from './api'
 import {
+  ChatroomType,
   Message,
   MessageChain,
   MessageType,
@@ -20,6 +21,7 @@ export class Context {
   senderName: string
 
   chatroom: number = 0
+  chatroomType: ChatroomType
   chatroomName: string
 
   quoteMessageChain: MessageChain = []
@@ -42,10 +44,12 @@ export class Context {
       if (message.type === 'FriendMessage') {
         this.senderName = message.sender.nickname
         this.chatroom = this.sender
+        this.chatroomType = 'Friend'
         this.chatroomName = message.sender.nickname
       } else if (message.type === 'GroupMessage') {
         this.senderName = message.sender.memberName
         this.chatroom = message.sender.group.id
+        this.chatroomType = 'Group'
         this.chatroomName = message.sender.group.name
       }
 
