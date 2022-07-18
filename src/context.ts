@@ -11,8 +11,8 @@ export class Context {
   api: Api
 
   messageType: MessageType
-  private messageSource: SourceMessage | undefined
-  private contentMessageChain: MessageChain
+  private sourceMessage: SourceMessage | undefined
+  private contentMessageChain: MessageChain = []
 
   from: number
   group: number = 0
@@ -31,21 +31,31 @@ export class Context {
     }
 
     const [sourceMessage, ...contentMessageChain] = message.messageChain
-    this.messageSource = sourceMessage
+    this.sourceMessage = sourceMessage
     this.contentMessageChain = contentMessageChain
 
     if (this.isCommand) {
-      console.log((this.contentMessageChain[0] as PlainMessage).text)
       this.commandResolver(contentMessageChain)
     }
   }
 
   get isCommand() {
-    return (
-      this.contentMessageChain[0] &&
+    const testCommandText = RegExp.prototype.test.bind(/^\s*\/(.+)/)
+
+    if (
       this.contentMessageChain[0].type === 'Plain' &&
-      /^\s*\/(.+)/.test(this.contentMessageChain[0].text)
-    )
+      testCommandText(this.contentMessageChain[0].text)
+    ) {
+      return true
+    } else if (
+      this.contentMessageChain[0].type === 'Quote' &&
+      this.contentMessageChain[1].type === 'Plain' &&
+      testCommandText(this.contentMessageChain[1].text)
+    ) {
+      return true
+    }
+
+    return false
   }
 
   private commandResolver(contentMessageChain: MessageChain) {}
