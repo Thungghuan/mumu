@@ -1,41 +1,46 @@
 import { Api } from './api'
-import {
-  Message,
-  MessageChain,
-  MessageType,
-  PlainMessage,
-  SourceMessage
-} from './types'
+import { Message, MessageChain, MessageType, SourceMessage } from './types'
 
 export class Context {
   api: Api
 
+  messageId: number
   messageType: MessageType
   private sourceMessage: SourceMessage | undefined
   private contentMessageChain: MessageChain = []
 
-  from: number
-  group: number = 0
+  sender: number
+  senderName: string
+
   chatroom: number = 0
+  chatroomName: string
 
   constructor(api: Api, message: Message) {
     this.api = api
 
-    this.messageType = message.type
-    this.from = message.sender.id
-    if (message.type === 'FriendMessage') {
-      this.chatroom = this.from
-    } else if (message.type === 'GroupMessage') {
-      this.group = message.sender.group.id
-      this.chatroom = this.group
-    }
+    console.log(message)
 
-    const [sourceMessage, ...contentMessageChain] = message.messageChain
-    this.sourceMessage = sourceMessage
-    this.contentMessageChain = contentMessageChain
+    if (message.type === 'FriendMessage' || message.type === 'GroupMessage') {
+      this.messageType = message.type
+      this.sender = message.sender.id
 
-    if (this.isCommand) {
-      this.commandResolver(contentMessageChain)
+      if (message.type === 'FriendMessage') {
+        this.senderName = message.sender.nickname
+        this.chatroom = this.sender
+        this.chatroomName = message.sender.nickname
+      } else if (message.type === 'GroupMessage') {
+        this.senderName = message.sender.memberName
+        this.chatroom = message.sender.group.id
+        this.chatroomName = message.sender.group.name
+      }
+
+      const [sourceMessage, ...contentMessageChain] = message.messageChain
+      this.sourceMessage = sourceMessage
+      this.contentMessageChain = contentMessageChain
+
+      if (this.isCommand) {
+        this.commandResolver(contentMessageChain)
+      }
     }
   }
 

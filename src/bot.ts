@@ -103,9 +103,11 @@ export class Bot {
 
   private fetch(interval = 1000) {
     const fetchFn = async () => {
-      const { data: messages } = await this.api.fetchMessage()
+      const { data: messages, code, msg } = await this.api.fetchMessage()
 
-      if (messages.length > 0) {
+      if (!messages) {
+        console.log(`Error with code ${code}: ${msg}`)
+      } else if (messages.length > 0) {
         for await (const message of messages) {
           this.resolve(message)
         }
@@ -121,6 +123,5 @@ export class Bot {
 
   private resolve(message: Message) {
     const ctx = createContext(this.api, message)
-    console.log(ctx.isCommand)
   }
 }
