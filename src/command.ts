@@ -1,5 +1,4 @@
 import { BotCommandName, MessageChain } from './types'
-import { createRegExp, exactly } from 'magic-regexp'
 
 export class Command {
   name: BotCommandName
@@ -9,10 +8,10 @@ export class Command {
   }
 }
 
-export const COMMAND_PATTERN = createRegExp(exactly('a'))
-
 export function validateCommand(name: BotCommandName) {
   if (!name) return false
 
-  return true
+  const COMMAND_PATTERN = /\b[a-zA-Z]+(\d+)?(_[0-9a-zA-Z]+)*\b/
+
+  return COMMAND_PATTERN.test(name)
 }
