@@ -1,4 +1,5 @@
 import { Api } from './api'
+import { Command } from './command'
 import {
   ChatroomType,
   Message,
@@ -25,6 +26,8 @@ export class Context {
   chatroomName: string
 
   quoteMessageChain: MessageChain = []
+
+  command: Command | null = null
 
   constructor(
     api: Api,
@@ -60,7 +63,7 @@ export class Context {
       }
 
       if (this.isCommand) {
-        this.commandResolver(this.contentMessageChain)
+        this.command = new Command(this.contentMessageChain)
       }
 
       if (this.isQuote) {
@@ -100,8 +103,6 @@ export class Context {
 
     return false
   }
-
-  private commandResolver(contentMessageChain: MessageChain) {}
 
   async reply(message: string | MessageChain) {
     if (typeof message === 'string') {
