@@ -14,8 +14,8 @@ export class Context {
 
   messageId: number
   messageType: MessageType
-  private sourceMessage: SourceMessage | undefined
-  private contentMessageChain: MessageChain = []
+  sourceMessage: SourceMessage | undefined
+  contentMessageChain: MessageChain = []
 
   sender: number
   senderName: string
@@ -102,6 +102,19 @@ export class Context {
   }
 
   private commandResolver(contentMessageChain: MessageChain) {}
+
+  async reply(message: string | MessageChain) {
+    if (typeof message === 'string') {
+      message = [
+        {
+          type: 'Plain',
+          text: message
+        }
+      ]
+    }
+
+    await this.api.sendMessage(this.chatroom, this.chatroomType, message)
+  }
 }
 
 export function createContext(api: Api, qq: number, message: Message) {
