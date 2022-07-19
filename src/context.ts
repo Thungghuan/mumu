@@ -63,7 +63,12 @@ export class Context {
       }
 
       if (this.isCommand) {
-        this.command = new Command(this.contentMessageChain)
+        if (this.isQuotedMe) {
+          const [_, ...commandMessageChain] = this.contentMessageChain
+          this.command = new Command(commandMessageChain)
+        } else {
+          this.command = new Command(this.contentMessageChain)
+        }
       }
 
       if (this.isQuote) {
