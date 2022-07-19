@@ -1,10 +1,9 @@
 import { createApi, Api } from './api'
-import { Context, createContext } from './context'
-import { loadSeting } from './utils'
+import { createContext } from './context'
+import { BotEvent } from './event'
 import {
   BotCommandName,
   BotConfig,
-  BotEventCache,
   BotEventHandler,
   BotEventKey,
   BotEventName,
@@ -12,13 +11,14 @@ import {
   Message,
   PlainMessage
 } from './types'
+import { loadSeting } from './utils'
 
 export class Bot {
   qq: number
   masterQQ: number
 
-  private eventCache: BotEventCache = new Map()
   private api: Api
+  private event: BotEvent
 
   constructor(config: BotConfig) {
     console.log('Resolving bot configure file...')
@@ -37,55 +37,31 @@ export class Bot {
     this.masterQQ = masterQQ
 
     this.api = createApi(qq, baseURL, verifyKey)
+    this.event = new BotEvent()
   }
 
   on(eventType: BotEventName, handler: BotEventHandler) {
     const key: BotEventKey<'message'> = `message:${eventType}`
-
-    if (this.eventCache.has(key)) {
-      this.eventCache.get(key).push(handler)
-    } else {
-      this.eventCache.set(key, [handler])
-    }
+    this.event.on(key, handler)
   }
 
   off(eventType: BotEventName) {
     const key: BotEventKey<'message'> = `message:${eventType}`
-
-    if (this.eventCache.has(key)) {
-      this.eventCache.delete(key)
-    }
+    this.event.off(key)
   }
 
   command(commandName: BotCommandName, handler: BotEventHandler) {
     if (!commandName) return
 
     const key: BotEventKey<'command'> = `command:${commandName}`
-
-    if (this.eventCache.has(key)) {
-      this.eventCache.get(key).push(handler)
-    } else {
-      this.eventCache.set(key, [handler])
-    }
+    this.event.on(key, handler)
   }
 
   offCommand(commandName: BotCommandName) {
     if (!commandName) return
 
     const key: BotEventKey<'command'> = `command:${commandName}`
-
-    if (this.eventCache.has(key)) {
-      this.eventCache.delete(key)
-    }
-  }
-
-  private emit<K extends BotEventType>(key: BotEventKey<K>, ctx: Context) {
-    if (this.eventCache.has(key)) {
-      this.eventCache
-        .get(key)
-        .slice()
-        .map((fn) => fn(ctx))
-    }
+    this.event.off(key)
   }
 
   use() {}
@@ -133,6 +109,18 @@ export class Bot {
 
   private resolve(message: Message) {
     const ctx = createContext(this.api, this.qq, message)
-    console.log(ctx.isCommand)
+    // console.log(ctx.isCommand)
+    if (!ctx.isCommand) {
+      const eventKeys = new Set<BotEventKey<BotEventType>>()
+
+      eventKeys.add('message:*')
+      eventKeys.add(`message:${ctx.messageType}`)
+
+      ctx.contentMessageChain.forEach((msg) => {
+        eventKeys.add(`message:${msg.type}`)
+      })
+
+      eventKeys.forEach((key) => this.event.emit(key, ctx))
+    }
   }
 }
