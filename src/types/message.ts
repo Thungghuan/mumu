@@ -63,7 +63,7 @@ export interface PlainMessage extends BasicSingleMessage {
 export type SingleMessage =
   | SourceMessage
   | QuoteMessage
-  | AtAllMessage
+  | AtMessage
   | AtAllMessage
   | FaceMessage
   | PlainMessage

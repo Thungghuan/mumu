@@ -25,8 +25,12 @@ export class Context {
   chatroomType: ChatroomType
   chatroomName: string
 
-  quoteMessageChain: MessageChain = []
+  isQuote: boolean
+  quoteMessage: QuoteMessage
 
+  isAtMe: boolean
+
+  isCommand: boolean
   command: Command | null = null
 
   constructor(
@@ -62,51 +66,30 @@ export class Context {
         this.contentMessageChain = message.messageChain
       }
 
-      if (this.isCommand) {
-        if (this.isQuotedMe) {
-          const [_, ...commandMessageChain] = this.contentMessageChain
-          this.command = new Command(commandMessageChain)
-        } else {
-          this.command = new Command(this.contentMessageChain)
-        }
+      if (this.contentMessageChain[0].type === 'Quote') {
+        this.isQuote = true
+        const [quoteMessage, ...contentMessageChain] = this.contentMessageChain
+
+        this.quoteMessage = quoteMessage
+        this.contentMessageChain = contentMessageChain
       }
 
-      if (this.isQuote) {
-        this.quoteMessageChain = (
-          this.contentMessageChain[0] as QuoteMessage
-        ).origin
+      if (
+        this.contentMessageChain[0].type === 'At' &&
+        this.contentMessageChain[0].target === this.qq
+      ) {
+        this.isAtMe = true
+        this.contentMessageChain.shift()
+      }
+
+      if (
+        this.contentMessageChain[0].type === 'Plain' &&
+        /^\s*\/(.+)/.test(this.contentMessageChain[0].text)
+      ) {
+        this.isCommand = true
+        this.command = new Command(this.contentMessageChain)
       }
     }
-  }
-
-  get isQuote() {
-    return this.contentMessageChain[0].type === 'Quote'
-  }
-
-  get isQuotedMe() {
-    return (
-      this.isQuote &&
-      (this.contentMessageChain[0] as QuoteMessage).senderId === this.qq
-    )
-  }
-
-  get isCommand() {
-    const testCommandText = RegExp.prototype.test.bind(/^\s*\/(.+)/)
-
-    if (
-      this.contentMessageChain[0].type === 'Plain' &&
-      testCommandText(this.contentMessageChain[0].text)
-    ) {
-      return true
-    } else if (
-      this.isQuotedMe &&
-      this.contentMessageChain[1].type === 'Plain' &&
-      testCommandText(this.contentMessageChain[1].text)
-    ) {
-      return true
-    }
-
-    return false
   }
 
   async reply(message: string | MessageChain) {
