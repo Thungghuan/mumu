@@ -8,8 +8,7 @@ import {
   BotEventKey,
   BotEventName,
   BotEventType,
-  Message,
-  PlainMessage
+  Message
 } from './types'
 import { loadSeting } from './utils'
 
@@ -69,15 +68,6 @@ export class Bot {
   async start() {
     console.log(await this.api.verify())
     console.log(await this.api.bind())
-
-    // const testMessage: PlainMessage = {
-    //   text: 'hi',
-    //   type: 'Plain'
-    // }
-
-    // console.log(
-    //   await this.api.sendMessage(this.masterQQ, 'Friend', [testMessage])
-    // )
 
     this.fetch()
 
