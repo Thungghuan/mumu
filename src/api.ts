@@ -81,19 +81,26 @@ export class Api {
   async sendMessage(
     target: number,
     chatroomType: ChatroomType,
-    messageChain: MessageChain
+    messageChain: MessageChain,
+    quoteMessage?: number
   ) {
+    const requestParam = {
+      sessionKey: this.sessionKey,
+      target,
+      messageChain,
+      quote: undefined
+    }
+    if (quoteMessage !== undefined) {
+      requestParam.quote = quoteMessage
+    }
+
     const requestUrl = `/send${chatroomType}Message`
 
     const { data } = await this.adapter.post<{
       code: number
       msg: string
       messageId: number
-    }>(requestUrl, {
-      sessionKey: this.sessionKey,
-      target,
-      messageChain
-    })
+    }>(requestUrl, requestParam)
     return data
   }
 }

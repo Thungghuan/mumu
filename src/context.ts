@@ -1,5 +1,6 @@
 import { Api } from './api'
 import { Command } from './command'
+import { createPlainMessage } from './message'
 import {
   ChatroomType,
   Message,
@@ -33,12 +34,7 @@ export class Context {
   isCommand: boolean
   command: Command | null = null
 
-  constructor(
-    api: Api,
-    qq: number,
-    message: Message,
-    withSource: boolean = true
-  ) {
+  constructor(api: Api, qq: number, message: Message) {
     this.api = api
     this.qq = qq
 
@@ -58,13 +54,9 @@ export class Context {
         this.chatroomName = message.sender.group.name
       }
 
-      if (withSource) {
-        const [sourceMessage, ...contentMessageChain] = message.messageChain
-        this.sourceMessage = sourceMessage
-        this.contentMessageChain = contentMessageChain
-      } else {
-        this.contentMessageChain = message.messageChain
-      }
+      const [sourceMessage, ...contentMessageChain] = message.messageChain
+      this.sourceMessage = sourceMessage
+      this.contentMessageChain = contentMessageChain
 
       if (this.contentMessageChain[0].type === 'Quote') {
         this.isQuote = true
@@ -94,15 +86,23 @@ export class Context {
 
   async reply(message: string | MessageChain) {
     if (typeof message === 'string') {
-      message = [
-        {
-          type: 'Plain',
-          text: message
-        }
-      ]
+      message = createPlainMessage(message)
     }
 
     await this.api.sendMessage(this.chatroom, this.chatroomType, message)
+  }
+
+  async quoteReply(message: string | MessageChain) {
+    if (typeof message === 'string') {
+      message = createPlainMessage(message)
+    }
+
+    await this.api.sendMessage(
+      this.chatroom,
+      this.chatroomType,
+      message,
+      this.sourceMessage.id
+    )
   }
 }
 

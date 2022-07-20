@@ -23,14 +23,14 @@ export class Bot {
   private invalidCommandEventKey: BotEventKey<'command'> = 'command:%%invalid%%'
   private invalidCommandHandler: BotEventHandler = (ctx) => {
     const command = ctx.command.name
-    ctx.reply(createPlainMessage(`Invalid command: "${command}"`))
+    ctx.reply(createPlainMessage(`Invalid command: '${command}'`))
   }
 
   private undefinedCommandEventKey: BotEventKey<'command'> =
     'command:%%undefined%%'
   private undefinedCommandHandler: BotEventHandler = (ctx) => {
     const command = ctx.command.name
-    ctx.reply(createPlainMessage(`Undefined command: "${command}"`))
+    ctx.reply(createPlainMessage(`Undefined command: '${command}'`))
   }
 
   constructor(config: BotConfig) {

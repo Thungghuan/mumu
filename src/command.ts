@@ -9,7 +9,7 @@ export class Command {
     const commandMessage = commandMessageChain[0] as PlainMessage
     this.name = getCommandName(commandMessage.text)
 
-    if (this.name) {
+    if (!this.name) {
       this.isValid = false
     } else {
       this.isValid = validateCommandName(this.name)

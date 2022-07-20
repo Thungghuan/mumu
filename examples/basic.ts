@@ -5,7 +5,7 @@ console.log('Hello World')
 const bot = new Bot(config)
 
 bot.on('*', (ctx) => {
-  ctx.reply([
+  ctx.quoteReply([
     ...createPlainMessage('Received a message: \n'),
     ...ctx.contentMessageChain
   ])
@@ -16,6 +16,10 @@ bot.command('*', (ctx) => {
     ...createPlainMessage('Received a command: \n'),
     ...ctx.contentMessageChain
   ])
+})
+
+bot.command('hi', (ctx) => {
+  ctx.reply('hello from mumu bot')
 })
 
 bot.start()
