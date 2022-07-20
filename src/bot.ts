@@ -1,6 +1,7 @@
 import { createApi, Api } from './api'
 import { createContext } from './context'
 import { BotEvent } from './event'
+import { createPlainMessage } from './message'
 import {
   BotCommandName,
   BotConfig,
@@ -18,6 +19,19 @@ export class Bot {
 
   private api: Api
   private event: BotEvent
+
+  private invalidCommandEventKey: BotEventKey<'command'> = 'command:%%invalid%%'
+  private invalidCommandHandler: BotEventHandler = (ctx) => {
+    const command = ctx.command.name
+    ctx.reply(createPlainMessage(`Invalid command: "${command}"`))
+  }
+
+  private undefinedCommandEventKey: BotEventKey<'command'> =
+    'command:%%undefined%%'
+  private undefinedCommandHandler: BotEventHandler = (ctx) => {
+    const command = ctx.command.name
+    ctx.reply(createPlainMessage(`Undefined command: "${command}"`))
+  }
 
   constructor(config: BotConfig) {
     console.log('Resolving bot configure file...')
@@ -37,6 +51,10 @@ export class Bot {
 
     this.api = createApi(qq, baseURL, verifyKey)
     this.event = new BotEvent()
+
+    this.event.on(this.invalidCommandEventKey, this.invalidCommandHandler)
+
+    this.event.on(this.undefinedCommandEventKey, this.undefinedCommandHandler)
   }
 
   on(eventType: BotEventName, handler: BotEventHandler) {
@@ -61,6 +79,14 @@ export class Bot {
 
     const key: BotEventKey<'command'> = `command:${commandName}`
     this.event.off(key)
+  }
+
+  setInvalidCommandHandler(handler: BotEventHandler) {
+    this.invalidCommandHandler = handler
+  }
+
+  setUndefinedCommandHandler(handler: BotEventHandler) {
+    this.undefinedCommandHandler = handler
   }
 
   use() {}
@@ -110,7 +136,14 @@ export class Bot {
       })
     } else {
       eventKeys.add(`command:*`)
-      eventKeys.add(`command:${ctx.command.name}`)
+
+      if (!ctx.command.isValid) {
+        eventKeys.add(this.invalidCommandEventKey)
+      } else if (!this.event.has(`command:${ctx.command.name}`)) {
+        eventKeys.add(this.undefinedCommandEventKey)
+      } else {
+        eventKeys.add(`command:${ctx.command.name}`)
+      }
     }
 
     eventKeys.forEach((key) => this.event.emit(key, ctx))

@@ -7,12 +7,12 @@ export class Command {
 
   constructor(commandMessageChain: MessageChain) {
     const commandMessage = commandMessageChain[0] as PlainMessage
-    const name = getCommandName(commandMessage.text)
+    this.name = getCommandName(commandMessage.text)
 
-    if (!name) {
+    if (this.name) {
       this.isValid = false
     } else {
-      this.isValid = validateCommandName(name)
+      this.isValid = validateCommandName(this.name)
     }
   }
 }

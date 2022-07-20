@@ -30,4 +30,8 @@ export class BotEvent {
       handlersToExec.forEach((fn) => fn(ctx))
     }
   }
+
+  has(key: BotEventKey<BotEventType>) {
+    return this.eventCache.has(key)
+  }
 }
