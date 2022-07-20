@@ -109,18 +109,20 @@ export class Bot {
 
   private resolve(message: Message) {
     const ctx = createContext(this.api, this.qq, message)
-    // console.log(ctx.isCommand)
-    if (!ctx.isCommand) {
-      const eventKeys = new Set<BotEventKey<BotEventType>>()
 
+    const eventKeys = new Set<BotEventKey<BotEventType>>()
+    if (!ctx.isCommand) {
       eventKeys.add('message:*')
       eventKeys.add(`message:${ctx.messageType}`)
 
       ctx.contentMessageChain.forEach((msg) => {
         eventKeys.add(`message:${msg.type}`)
       })
-
-      eventKeys.forEach((key) => this.event.emit(key, ctx))
+    } else {
+      eventKeys.add(`command:*`)
+      eventKeys.add(`command:${ctx.command.name}`)
     }
+
+    eventKeys.forEach((key) => this.event.emit(key, ctx))
   }
 }
