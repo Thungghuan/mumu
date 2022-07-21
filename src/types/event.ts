@@ -20,5 +20,5 @@ export type BotEventKey<T extends BotEventType> = T extends 'message'
 export type BotEventName = BotMessageType
 
 export interface BotEventHandler {
-  (ctx?: Context): any
+  (ctx: Context): any
 }

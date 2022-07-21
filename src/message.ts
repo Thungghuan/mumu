@@ -1,10 +1,16 @@
-import { PlainMessage, MessageChain } from './types'
+import { MessageChain } from './types'
 
-export function createPlainMessage(text: string): MessageChain {
-  const plainMessage: PlainMessage = {
-    type: 'Plain',
-    text
+export function createPlainMessage(
+  message: string | MessageChain
+): MessageChain {
+  if (typeof message === 'string') {
+    return [
+      {
+        type: 'Plain',
+        text: message
+      }
+    ]
   }
 
-  return [plainMessage]
+  return message
 }

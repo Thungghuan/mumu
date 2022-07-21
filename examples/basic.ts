@@ -21,4 +21,6 @@ bot.command('hi', (ctx) => {
   ctx.reply('hello from mumu bot')
 })
 
-bot.start()
+bot.start(() => {
+  bot.logToMaster('Bot started successfully!')
+})

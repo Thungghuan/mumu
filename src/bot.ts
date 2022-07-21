@@ -10,7 +10,9 @@ import {
   BotEventKey,
   BotEventName,
   BotEventType,
-  Message
+  ChatroomType,
+  Message,
+  MessageChain
 } from './types'
 import { loadSeting } from './utils'
 
@@ -71,7 +73,7 @@ export class Bot {
   command(commandName: BotCommandName, handler: BotEventHandler) {
     if (!commandName) return
 
-    if (!validateCommandName(commandName)) {
+    if (commandName !== '*' && !validateCommandName(commandName)) {
       console.log(
         `Warning: command name ${commandName} is invalid, this command will be ignored.`
       )
@@ -99,9 +101,31 @@ export class Bot {
 
   use() {}
 
-  async start() {
+  async sendMessage(
+    target: number,
+    chatroomType: ChatroomType,
+    message: string | MessageChain
+  ) {
+    return await this.api.sendMessage(
+      target,
+      chatroomType,
+      createPlainMessage(message)
+    )
+  }
+
+  async logToMaster(log: string) {
+    return await this.sendMessage(
+      this.masterQQ,
+      'Friend',
+      createPlainMessage(log)
+    )
+  }
+
+  async start(cb?: () => any) {
     console.log(await this.api.verify())
     console.log(await this.api.bind())
+
+    cb && cb()
 
     this.fetch()
 
