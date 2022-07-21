@@ -29,6 +29,7 @@ export class Context {
   isQuote: boolean
   quoteMessage: QuoteMessage
 
+  isAt: boolean
   isAtMe: boolean
 
   isCommand: boolean
@@ -71,6 +72,13 @@ export class Context {
         this.contentMessageChain[0].target === this.qq
       ) {
         this.isAtMe = true
+      }
+
+      if (
+        this.contentMessageChain[0].type === 'At' ||
+        this.contentMessageChain[0].type === 'AtAll'
+      ) {
+        this.isAt = true
         this.contentMessageChain.shift()
       }
 
