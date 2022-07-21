@@ -1,4 +1,5 @@
 import { createApi, Api } from './api'
+import { validateCommandName } from './command'
 import { createContext } from './context'
 import { BotEvent } from './event'
 import { createPlainMessage } from './message'
@@ -69,6 +70,13 @@ export class Bot {
 
   command(commandName: BotCommandName, handler: BotEventHandler) {
     if (!commandName) return
+
+    if (!validateCommandName(commandName)) {
+      console.log(
+        `Warning: command name ${commandName} is invalid, this command will be ignored.`
+      )
+      return
+    }
 
     const key: BotEventKey<'command'> = `command:${commandName}`
     this.event.on(key, handler)
