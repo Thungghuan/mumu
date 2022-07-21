@@ -1,4 +1,4 @@
-import { getCommandName, validateCommandName } from '../src/command'
+import { parseCommand, validateCommandName } from '../src/command'
 import { describe, expect, it } from 'vitest'
 
 describe('validate command name', () => {
@@ -27,16 +27,16 @@ describe('validate command name', () => {
 
 describe('get command name', () => {
   it('get one word command', () => {
-    expect(getCommandName('/abc')).toEqual('abc')
+    expect(parseCommand('/abc')[0]).toEqual('abc')
   })
 
   it('get multi words command', () => {
-    expect(getCommandName('/multi_words_command')).toEqual(
+    expect(parseCommand('/multi_words_command')[0]).toEqual(
       'multi_words_command'
     )
   })
 
   it('get command name with number', () => {
-    expect(getCommandName('/command2_123abc')).toEqual('command2_123abc')
+    expect(parseCommand('/command2_123abc')[0]).toEqual('command2_123abc')
   })
 })
