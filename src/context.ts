@@ -93,22 +93,18 @@ export class Context {
   }
 
   async reply(message: string | MessageChain) {
-    if (typeof message === 'string') {
-      message = createPlainMessage(message)
-    }
-
-    await this.api.sendMessage(this.chatroom, this.chatroomType, message)
-  }
-
-  async quoteReply(message: string | MessageChain) {
-    if (typeof message === 'string') {
-      message = createPlainMessage(message)
-    }
-
     await this.api.sendMessage(
       this.chatroom,
       this.chatroomType,
-      message,
+      createPlainMessage(message)
+    )
+  }
+
+  async quoteReply(message: string | MessageChain) {
+    await this.api.sendMessage(
+      this.chatroom,
+      this.chatroomType,
+      createPlainMessage(message),
       this.sourceMessage.id
     )
   }

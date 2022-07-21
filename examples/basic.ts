@@ -1,5 +1,6 @@
 import config from './config'
 import { Bot, createPlainMessage } from '../dist'
+import help from '../dist/plugins/help'
 
 const bot = new Bot(config)
 
@@ -9,6 +10,8 @@ bot.on('*', (ctx) => {
     ...ctx.contentMessageChain
   ])
 })
+
+bot.use(help)
 
 bot.command('*', (ctx) => {
   ctx.reply([

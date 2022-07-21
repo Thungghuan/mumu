@@ -14,6 +14,7 @@ import {
   Message,
   MessageChain
 } from './types'
+import { LoadPluginFunc } from './types/plugin'
 import { loadSeting } from './utils'
 
 export class Bot {
@@ -99,7 +100,9 @@ export class Bot {
     this.undefinedCommandHandler = handler
   }
 
-  use() {}
+  use(loadPlugin: LoadPluginFunc, ...args: any) {
+    console.log(`Plugin [${loadPlugin(this, ...args)}] loaded.`)
+  }
 
   async sendMessage(
     target: number,
