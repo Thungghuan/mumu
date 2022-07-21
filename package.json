@@ -1,6 +1,6 @@
 {
   "name": "mumu-bot",
-  "version": "1.0.1-beta.0",
+  "version": "1.0.1-beta.1",
   "description": "",
   "exports": {
     ".": {
@@ -17,6 +17,12 @@
       "*": [
         "./dist/*",
         "./dist/index.d.ts"
+      ]
+    },
+    "plugin": {
+      "*": [
+        "./dist/plugin/*",
+        "./dist/plugin/index.d.ts"
       ]
     }
   },
