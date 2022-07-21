@@ -1,24 +1,50 @@
 {
-  "name": "mumu",
+  "name": "mumu-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsx scripts/dev.ts",
     "test": "vitest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "QQ",
+    "bot",
+    "mirai",
+    "mirai-api-http"
+  ],
+  "author": "Thungghuan",
+  "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^18.0.5",
     "axios": "^0.27.2",
+    "@types/node": "^18.0.5",
     "cac": "^6.7.12",
     "tsup": "^6.1.3",
     "tsx": "^3.8.0",
     "typescript": "^4.7.4",
-    "vitest": "^0.18.1",
-    "yaml": "^2.1.1"
+    "yaml": "^2.1.1",
+    "vitest": "^0.18.1"
   }
 }
